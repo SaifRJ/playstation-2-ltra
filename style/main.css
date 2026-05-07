@@ -45,4 +45,39 @@ canvas {
     top: 0;
     left: 0;
     z-index: 0;
+    /* filter: blur(1px); */
+}
+
+.vignette {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+        ellipse at center,
+    transparent 10%,
+    rgba(0, 0, 0, 0.6) 70%,
+    rgba(0, 0, 0, 0.95) 100%
+    );
+    z-index: 2;
+    pointer-events: none;
+}
+
+#screen-press-ps p {
+    animation: textPulse 4s ease-in-out infinite;
+    font-size: 26px;
+    will-change: opacity, text-shadow;
+
+}
+
+@keyframes textPulse {
+    0%, 100% {
+        opacity: 0.4;
+        text-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+    }
+    50% {
+        opacity: 1;
+        text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+    }
 }
