@@ -1,3 +1,3 @@
-**The PS2, 26 YEARS LATER**
+**THE PS2, 26 YEARS LATER**
 
 *WIP*
