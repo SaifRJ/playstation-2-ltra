@@ -68,8 +68,33 @@ canvas {
     animation: textPulse 4s ease-in-out infinite;
     font-size: 26px;
     will-change: opacity, text-shadow;
-
 }
+
+
+.ps-logo {
+    width: 50px;
+    height: auto;
+    position: relative;
+    z-index: 2;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+    animation: logoPulse 4s ease-in-out infinite;
+}
+
+.press-ps-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: floatContent 6s ease-in-out infinite;
+}
+
+.logo-container {
+    position: absolute;
+    top: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 
 @keyframes textPulse {
     0%, 100% {
@@ -81,3 +106,15 @@ canvas {
         text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
     }
 }
+
+
+@keyframes floatContent {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-4px);
+    }
+}
+
+
