@@ -1,6 +1,9 @@
 const state = {
     currentScreen: 'press-ps',
-    isTransitioning: false
+    isTransitioning: false,
+    transitionProgress: 0,
+    transitionType: null,
+    selectedAccount: 1
 };
 
 export default state;

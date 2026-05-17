@@ -1,6 +1,7 @@
+import * as THREE from 'three';
 import { scene } from './scene.js';
 
-// === VOLUMETRIC FOG ===
+// VOLUMETRIC FOG 
 const fogParticles = [];
 
 const fogCanvas = document.createElement('canvas');
@@ -59,6 +60,7 @@ for (let i = 0; i < 375; i++) {
         opacity = 0.04 + Math.random() * 0.08;
         texture = fogTexture;
     }
+    
 
     
     const fogMaterial = new THREE.SpriteMaterial({
@@ -66,8 +68,10 @@ for (let i = 0; i < 375; i++) {
         transparent: true,
         opacity: opacity,
         depthWrite: false,
-        blending: THREE.AdditiveBlending
+        blending: THREE.AdditiveBlending,
+        toneMapped: false
     });
+    
 
     const sprite = new THREE.Sprite(fogMaterial);
     sprite.position.set(x, y, z);

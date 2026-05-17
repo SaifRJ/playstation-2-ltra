@@ -1,6 +1,7 @@
+import * as THREE from 'three';
 import { scene } from './scene.js';
 
-const particleCount = 550;
+const particleCount = 750;
 
 // Sharp dot texture with tiny glow
 const particleCanvas = document.createElement('canvas');
@@ -36,7 +37,7 @@ for (let i = 0; i < particleCount; i++) {
         x = (Math.random() - 0.5) * 60;
         y = (Math.random() - 0.5) * 40;
         z = (Math.random() - 0.5) * 80 + 10;
-    } while (Math.sqrt(x * x + y * y + (z - 40) * (z - 40)) < 10);
+    } while (Math.sqrt(x * x + y * y + (z - 40) * (z - 30)) < 10);
 
     positions[i * 3] = x;
     positions[i * 3 + 1] = y;
@@ -53,7 +54,8 @@ const particleMaterial = new THREE.PointsMaterial({
     opacity: 0.9,
     depthWrite: false,
     blending: THREE.AdditiveBlending,
-    sizeAttenuation: true
+    sizeAttenuation: true,
+    toneMapped: false
 });
 
 const particles = new THREE.Points(particleGeometry, particleMaterial);

@@ -1,3 +1,5 @@
+import * as THREE from 'three';
+
 // Scene
 const scene = new THREE.Scene();
 scene.fog = new THREE.FogExp2(0x020510, 0.015);

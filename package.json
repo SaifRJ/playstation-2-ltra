@@ -1,0 +1,28 @@
+{
+  "name": "ps2-ltra",
+  "version": "1.0.0",
+  "description": "THE PLAYSTATION 2, 26 YEARS LATER",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SaifRJ/PS2-LTRA.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SaifRJ/PS2-LTRA/issues"
+  },
+  "homepage": "https://github.com/SaifRJ/PS2-LTRA#readme",
+  "dependencies": {
+    "gsap": "^3.15.0",
+    "three": "^0.128.0"
+  },
+  "devDependencies": {
+    "vite": "^8.0.13"
+  }
+}
