@@ -2,8 +2,8 @@ import state from './state.js';
 import gsap from 'gsap';
 import { initAudio, loadSound, playSound } from './audio.js';
 import { camera } from './scene.js';
-import { transitionToAccountSelect } from './transitions.js';
-import { navigateAccounts } from './account-shapes.js'
+import { transitionToAccountSelect, transitionToMainMenu } from './transitions.js';
+import { navigateAccounts } from './shapes.js'
 
 let audioReady = false;
 
@@ -40,6 +40,11 @@ document.addEventListener('keydown', async (e) => {
         navigateAccounts(1);
         playSound('scroll', 0.5);
     }
-}
+    if (e.key === 'Enter') {
+        playSound('confirm', 0.5)
+        transitionToMainMenu()
+    }
+
+    }
     
 });

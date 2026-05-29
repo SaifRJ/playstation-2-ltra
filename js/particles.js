@@ -21,7 +21,7 @@ pCtx.fillRect(0, 0, 128, 128);
 
 pCtx.fillStyle = 'rgba(220, 235, 255, 1)';
 pCtx.beginPath();
-pCtx.arc(64, 64, 4, 0, Math.PI * 2);
+pCtx.arc(64, 64, 4, 0, Math.PI * 3);
 pCtx.fill();
 
 const particleTexture = new THREE.CanvasTexture(particleCanvas);
