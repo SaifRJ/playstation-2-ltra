@@ -1,7 +1,7 @@
 const accounts = [
-    { id: 0, name: 'New User', shape: 'octahedron' },
+    { id: 0, name: 'New User +', shape: 'default' },
     { id: 1, name: 'Saif', shape: 'icosahedron' },
-    { id: 2, name: 'Guest', shape: 'dodecahedron' }
+    { id: 2, name: 'Guest', shape: 'tetrahedron' }
 ];
 
 export { accounts };

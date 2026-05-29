@@ -24,7 +24,7 @@ body {
 }
 
 p {
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
 }
 
@@ -58,9 +58,9 @@ canvas {
     height: 100%;
     background: radial-gradient(
         ellipse at center,
-        transparent 10%,
-        rgba(0, 0, 0, 0.6) 70%,
-        rgba(0, 0, 0, 0.95) 100%
+        transparent 20%,
+        rgba(0, 0, 0, 0.6) 92%,
+        rgb(0, 0, 0) 100%
     );
     z-index: 2;
     pointer-events: none;
@@ -109,25 +109,36 @@ canvas {
     justify-content: center;
     width: 100%;
     height: 100%;
-    animation: fadeInUp 0.8s ease forwards;
+    animation: fadeIn 0.8s ease forwards;
+}
+
+.welcome-select-account {
+    font-size: 40px;
+    will-change: opacity, text-shadow;
+    position: absolute;
+    top: 15%;
+    /* opacity: 0; */
+    animation: fadeIn 0.5s ease forwards;
+    /* animation: floatContent 6s ease-in-out infinite; */
+
 }
 
 .select-account-title {
-    font-size: 30px;
+    font-size: 29px;
     will-change: opacity, text-shadow;
     position: absolute;
-    top: 30%;
+    top: 27%;
     opacity: 0;
-    animation: fadeInUp 0.5s ease forwards;
+    animation: fadeIn 0.5s ease forwards;
 }
 
 .account-name-display {
     font-size: 24px;
     color: rgba(255, 255, 255, 0.9);
     position: absolute;
-    bottom: 35%;
+    bottom: 30%;
     opacity: 0;
-    animation: fadeInUp 0.5s ease forwards;
+    animation: fadeIn 0.5s ease forwards;
 }
 
 /* ANIMATIONS */
@@ -185,5 +196,14 @@ canvas {
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
     }
 }

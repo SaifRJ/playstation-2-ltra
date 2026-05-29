@@ -1,10 +1,14 @@
 import * as THREE from 'three';
-import { scene, camera, renderer } from './scene.js';
+import { scene, camera, renderer, composer } from './scene.js';
 import { particles } from './particles.js';
 import { fogParticles } from './fog.js';
-import { animateShapes, shapeGroup } from './account-shapes.js';
+import { animateShapes, shapeGroup } from './shapes.js';
 import state from './state.js';
 import './input.js';
+import Stats from 'three/examples/jsm/libs/stats.module.js';
+
+const stats = new Stats();
+document.body.appendChild(stats.dom);
 
 function animate() {
     requestAnimationFrame(animate);
@@ -31,7 +35,8 @@ function animate() {
         animateShapes();
     }
 
-    renderer.render(scene, camera);
+    composer.render();
+    stats.update();
 }
 
 animate();

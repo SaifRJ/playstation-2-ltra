@@ -1,92 +1,86 @@
 import * as THREE from 'three';
 import { scene } from './scene.js';
 
-// VOLUMETRIC FOG 
 const fogParticles = [];
 
-const fogCanvas = document.createElement('canvas');
-fogCanvas.width = 512;
-fogCanvas.height = 512;
-const fogCtx = fogCanvas.getContext('2d');
+function makeFogTexture(bright = false) {
+  const size = 512;
+  const c = document.createElement('canvas');
+  c.width = c.height = size;
+  const ctx = c.getContext('2d');
 
-const gradient = fogCtx.createRadialGradient(256, 256, 0, 256, 256, 256);
-gradient.addColorStop(0, 'rgba(8, 20, 60, 0.5)');
-gradient.addColorStop(0.3, 'rgba(8, 20, 60, 0.25)');
-gradient.addColorStop(0.6, 'rgba(5, 15, 45, 0.1)');
-gradient.addColorStop(1, 'rgba(5, 15, 45, 0)');
-fogCtx.fillStyle = gradient;
-fogCtx.fillRect(0, 0, 512, 512);
+  const core = bright ? [20, 40, 100] : [8, 20, 60];
+  const edge = bright ? [10, 25, 70]  : [5, 15, 45];
 
-const fogTexture = new THREE.CanvasTexture(fogCanvas);
+  const blobs = 14;
+  for (let i = 0; i < blobs; i++) {
 
-// Brighter texture for sprites near the light
-const brightFogCanvas = document.createElement('canvas');
-brightFogCanvas.width = 512;
-brightFogCanvas.height = 512;
-const brightFogCtx = brightFogCanvas.getContext('2d');
+    const angle = Math.random() * Math.PI * 2;
+    const dist = Math.random() * size * 0.22;     
+    const bx = size/2 + Math.cos(angle) * dist;
+    const by = size/2 + Math.sin(angle) * dist;
+    const r = size * (0.12 + Math.random() * 0.18);
 
-const brightGradient = brightFogCtx.createRadialGradient(256, 256, 0, 256, 256, 256);
-brightGradient.addColorStop(0, 'rgba(20, 40, 100, 0.6)');
-brightGradient.addColorStop(0.2, 'rgba(15, 35, 90, 0.35)');
-brightGradient.addColorStop(0.5, 'rgba(10, 25, 70, 0.1)');
-brightGradient.addColorStop(1, 'rgba(5, 15, 45, 0)');
-brightFogCtx.fillStyle = brightGradient;
-brightFogCtx.fillRect(0, 0, 512, 512);
+    const g = ctx.createRadialGradient(bx, by, 0, bx, by, r);
+    const a = 0.06 + Math.random() * 0.06;        
+    g.addColorStop(0,   `rgba(${core[0]}, ${core[1]}, ${core[2]}, ${a})`);
+    g.addColorStop(0.5, `rgba(${edge[0]}, ${edge[1]}, ${edge[2]}, ${a * 0.4})`);
+    g.addColorStop(1,   `rgba(${edge[0]}, ${edge[1]}, ${edge[2]}, 0)`);
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, size, size);
+  }
 
-const brightFogTexture = new THREE.CanvasTexture(brightFogCanvas);
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.NoColorSpace;
+  return tex;
+}
 
-for (let i = 0; i < 375; i++) {
-    // Cluster most sprites near the light source at (0, 0, -20)
-    // Using gaussian-like distribution: closer to center = more likely
-    const spread = Math.random();
-    const isNearCenter = spread < 0.6;
+const fogTexture = makeFogTexture(false);
+const brightFogTexture = makeFogTexture(true);
 
-    let x, y, z, scale, opacity, texture;
+const FOG_LAYERS = [
+  
+    // layer 1 - haze
+    {count: 200, zMin: -30, zMax: 15, spreadX: 100,  spreadY: 70, scaleMin: 8,  scaleMax: 40, opacityMin: 0.1,  opacityMax: 0.15,  bright: true  },
 
-    if (isNearCenter) {
-        // Dense cluster near the light
-        x = (Math.random() - 0.5) * 45;
-        y = (Math.random() - 0.5) * 35;
-        z = -20 + (Math.random() - 0.5) * 25;
-        scale = 8 + Math.random() * 20;
-        opacity = 0.08 + Math.random() * 0.14;
-        texture = brightFogTexture;
-    } else {
-        // Sparse, larger wisps further out
-        x = (Math.random() - 0.5) * 80;
-        y = (Math.random() - 0.5) * 50;
-        z = (Math.random() - 0.5) * 80 - 10;
-        scale = 25 + Math.random() * 40;
-        opacity = 0.04 + Math.random() * 0.08;
-        texture = fogTexture;
-    }
-    
+    // layer 2 - horizon
+    {count: 350,  zMin: -25, zMax: -50, spreadX: 100, spreadY: 70, scaleMin: 20, scaleMax: 90, opacityMin: 0.1, opacityMax: 0.2, bright: false },
 
-    
+];
+
+FOG_LAYERS.forEach((layer, layerIndex) => {
+  const texture = layer.bright ? brightFogTexture : fogTexture;
+
+  for (let i = 0; i < layer.count; i++) {
+    const x = (Math.random() - 0.5) * layer.spreadX;
+    const y = (Math.random() - 0.5) * layer.spreadY;
+    const z = layer.zMin + Math.random() * (layer.zMax - layer.zMin);
+    const scale = layer.scaleMin + Math.random() * (layer.scaleMax - layer.scaleMin);
+    const opacity = layer.opacityMin + Math.random() * (layer.opacityMax - layer.opacityMin);
+
     const fogMaterial = new THREE.SpriteMaterial({
-        map: texture,
-        transparent: true,
-        opacity: opacity,
-        depthWrite: false,
-        blending: THREE.AdditiveBlending,
-        toneMapped: false
+      map: texture,
+      transparent: true,
+      opacity: opacity,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+      toneMapped: false
     });
-    
 
     const sprite = new THREE.Sprite(fogMaterial);
     sprite.position.set(x, y, z);
     sprite.scale.set(scale, scale, 1);
-
     sprite.userData = {
-        baseX: sprite.position.x,
-        baseY: sprite.position.y,
-        driftSpeed: 0.00005 + Math.random() * 0.00012,
-        driftAmount: 1.5 + Math.random() * 3,
-        rotSpeed: (Math.random() - 0.5) * 0.00008
+      baseX: x,
+      baseY: y,
+      layerIndex,                                
+      driftSpeed: 0.00005 + Math.random() * 0.00012,
+      driftAmount: 3.5 + Math.random() * 3,
+      rotSpeed: (Math.random() - 0.5) * 0.00008
     };
-
     fogParticles.push(sprite);
     scene.add(sprite);
-}
+  }
+});
 
 export { fogParticles };
