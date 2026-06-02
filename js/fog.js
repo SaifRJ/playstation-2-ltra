@@ -41,10 +41,13 @@ const brightFogTexture = makeFogTexture(true);
 const FOG_LAYERS = [
   
     // layer 1 - haze
-    {count: 200, zMin: -30, zMax: 15, spreadX: 100,  spreadY: 70, scaleMin: 8,  scaleMax: 40, opacityMin: 0.1,  opacityMax: 0.15,  bright: true  },
+    {count: 200, zMin: -30, zMax: 20, spreadX: 100,  spreadY: 70, scaleMin: 8,  scaleMax: 40, opacityMin: 0.1,  opacityMax: 0.2,  bright: true  },
 
-    // layer 2 - horizon
-    {count: 350,  zMin: -25, zMax: -50, spreadX: 100, spreadY: 70, scaleMin: 20, scaleMax: 90, opacityMin: 0.1, opacityMax: 0.2, bright: false },
+    // layer 2 - fog
+    {count: 250,  zMin: -25, zMax: -50, spreadX: 100, spreadY: 70, scaleMin: 20, scaleMax: 90, opacityMin: 0.1, opacityMax: 0.2, bright: false },
+
+    // layer 3 - horizon
+    {count: 100,  zMin: -25, zMax: -50, spreadX: 100, spreadY: 70, scaleMin: 20, scaleMax: 90, opacityMin: 0.2, opacityMax: 0.35, bright: false, driftSpeed: 6 + Math.random() * 0.00012 }
 
 ];
 
