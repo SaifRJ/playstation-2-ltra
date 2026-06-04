@@ -3,7 +3,7 @@ import gsap from 'gsap';
 import { initAudio, loadSound, playSound } from './audio.js';
 import { camera } from './scene.js';
 import { transitionToAccountSelect, transitionToMainMenu } from './transitions.js';
-import { navigateAccounts } from './shapes.js'
+import { navigateAccounts, setSelectorTarget, getSelectedMesh } from './shapes.js'
 
 let audioReady = false;
 
@@ -34,10 +34,12 @@ document.addEventListener('keydown', async (e) => {
     if (state.currentScreen === 'account-select' && !state.isTransitioning) {
     if (e.key === 'ArrowLeft') {
         navigateAccounts(-1);
+        setSelectorTarget(getSelectedMesh());
         playSound('scroll', 0.5);
     }
     if (e.key === 'ArrowRight') {
         navigateAccounts(1);
+        setSelectorTarget(getSelectedMesh());
         playSound('scroll', 0.5);
     }
     if (e.key === 'Enter') {
