@@ -3,7 +3,6 @@ import { scene } from './scene.js';
 
 const particleCount = 750;
 
-// Sharp dot texture with tiny glow
 const particleCanvas = document.createElement('canvas');
 particleCanvas.width = 128;
 particleCanvas.height = 128;
@@ -27,16 +26,16 @@ pCtx.fill();
 const particleTexture = new THREE.CanvasTexture(particleCanvas);
 
 const Z_BANDS = [
-    
+
     { zMin: -30, zMax: -14, fraction: 0.10 }, 
     
-    { zMin: -14, zMax:   2, fraction: 0.15 },
+    { zMin: -14, zMax:   2, fraction: 0.10 },
     
     { zMin:   5, zMax:  18, fraction: 0.30 },
 
-    { zMin:  18, zMax:  34, fraction: 0.30 },
+    { zMin:  18, zMax:  34, fraction: 0.45 },
 
-    { zMin:  34, zMax:  50, fraction: 0.15 } 
+    { zMin:  34, zMax:  50, fraction: 0.5 } 
 ];
 
 const positions = new Float32Array(particleCount * 3);
