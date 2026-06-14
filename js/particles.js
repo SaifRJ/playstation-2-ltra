@@ -3,7 +3,6 @@ import { scene } from './scene.js';
 
 const particleCount = 750;
 
-// Sharp dot texture with tiny glow
 const particleCanvas = document.createElement('canvas');
 particleCanvas.width = 128;
 particleCanvas.height = 128;
@@ -26,23 +25,38 @@ pCtx.fill();
 
 const particleTexture = new THREE.CanvasTexture(particleCanvas);
 
-// Create positions
-const positions = new Float32Array(particleCount * 3);
+const Z_BANDS = [
 
-for (let i = 0; i < particleCount; i++) {
-    let x, y, z;
+    { zMin: -30, zMax: -14, fraction: 0.10 }, 
     
-    // Keep generating until we get a position far enough from camera
-    do {
-        x = (Math.random() - 0.5) * 60;
-        y = (Math.random() - 0.5) * 40;
-        z = (Math.random() - 0.5) * 80 + 10;
-    } while (Math.sqrt(x * x + y * y + (z - 40) * (z - 30)) < 10);
+    { zMin: -14, zMax:   2, fraction: 0.10 },
+    
+    { zMin:   5, zMax:  18, fraction: 0.30 },
 
-    positions[i * 3] = x;
-    positions[i * 3 + 1] = y;
-    positions[i * 3 + 2] = z;
-}
+    { zMin:  18, zMax:  34, fraction: 0.45 },
+
+    { zMin:  34, zMax:  50, fraction: 0.5 } 
+];
+
+const positions = new Float32Array(particleCount * 3);
+let idx = 0;
+
+Z_BANDS.forEach(band => {
+    const count = Math.floor(particleCount * band.fraction);
+    for (let i = 0; i < count; i++) {
+        let x, y, z;
+        do {
+            x = (Math.random() - 0.5) * 60;
+            y = (Math.random() - 0.5) * 40;
+            z = band.zMin + Math.random() * (band.zMax - band.zMin);
+        } while (Math.sqrt(x * x + y * y + (z - 40) * (z - 30)) < 5);
+
+        positions[idx * 3]     = x;
+        positions[idx * 3 + 1] = y;
+        positions[idx * 3 + 2] = z;
+        idx++;
+    }
+});
 
 const particleGeometry = new THREE.BufferGeometry();
 particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));

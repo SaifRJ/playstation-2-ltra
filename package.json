@@ -20,6 +20,7 @@
   "homepage": "https://github.com/SaifRJ/PS2-LTRA#readme",
   "dependencies": {
     "gsap": "^3.15.0",
+    "simplex-noise": "^4.0.3",
     "three": "^0.128.0"
   },
   "devDependencies": {

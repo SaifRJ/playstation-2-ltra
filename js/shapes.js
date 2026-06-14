@@ -12,67 +12,98 @@ function makeOrbTexture() {
     c.width = c.height = 128;
     const ctx = c.getContext('2d');
     const g = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
-    g.addColorStop(0,    'rgba(255,255,255,1.0)');
-    g.addColorStop(0.15, 'rgba(255,255,255,0.95)');  // hotter core, smaller
-    g.addColorStop(0.4,  'rgba(255,255,255,0.5)');
-    g.addColorStop(0.8,  'rgba(255,255,255,0.08)');
-    g.addColorStop(1,    'rgba(255,255,255,0)');
+    g.addColorStop(0,'rgba(255,255,255,1.0)');
+    g.addColorStop(0.15,'rgba(255,255,255,0.75)');
+    g.addColorStop(0.4, 'rgba(255,255,255,0.5)');
+    g.addColorStop(0.8, 'rgba(255,255,255,0.08)');
+    g.addColorStop(1, 'rgba(255,255,255,0)');
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, 128, 128);
     return new THREE.CanvasTexture(c);
 }
 const orbTexture = makeOrbTexture();
 
-// WIP
+function makeOrbCoreTexture() {
+    const c = document.createElement('canvas');
+    c.width = c.height = 128;
+    const ctx = c.getContext('2d');
+    const g = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+    g.addColorStop(0,'rgba(255,255,255,1.0)');
+    g.addColorStop(0.15,'rgba(255,255,255,0.75)');
+    g.addColorStop(0.4, 'rgba(255,255,255,0.5)');
+    g.addColorStop(0.8, 'rgba(255,255,255,0.08)');
+    g.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, 128, 128);
+    return new THREE.CanvasTexture(c);
+}
+const orbCoreTexture = makeOrbCoreTexture();
+
 function attachSelector(targetMesh) {
     targetMesh.geometry.computeBoundingSphere();
     const r = targetMesh.geometry.boundingSphere.radius;
     const orbitRadius = r * 1.35;
-    const HISTORY = 200;
+    const HISTORY = 250;
 
     const selectorGroup = new THREE.Group();
     shapeGroup.add(selectorGroup);
 
     const orbs = SELECTOR_COLORS.map((color, i) => {
-        const orb = new THREE.Sprite(new THREE.SpriteMaterial({
-            map: orbTexture,
-            color: color,
-            transparent: true,
-            blending: THREE.AdditiveBlending,
-            depthWrite: false,
-            toneMapped: false
-        }));
-        orb.scale.setScalar(orbitRadius * 0.25);
-        selectorGroup.add(orb);
+    const orbGroup = new THREE.Group();
 
-        const trailGeo = new THREE.BufferGeometry();
-        const positions = new Float32Array(HISTORY * 3);
-        trailGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        const trailColors = new Float32Array(HISTORY * 3);
-        trailGeo.setAttribute('color', new THREE.BufferAttribute(trailColors, 3));
-        const trailMat = new THREE.LineBasicMaterial({
-            vertexColors: true,
-            transparent: true,
-            blending: THREE.AdditiveBlending,
-            depthWrite: false
-        });
-        const trail = new THREE.Line(trailGeo, trailMat);
-        selectorGroup.add(trail);
+    const core = new THREE.Sprite(new THREE.SpriteMaterial({
+        map: orbCoreTexture,
+        color: new THREE.Color(color),
+        transparent: true,
+        blending: THREE.NormalBlending,
+        depthWrite: false,
+        toneMapped: false
+    }));
+    core.scale.setScalar(orbitRadius * 0.18);
+    orbGroup.add(core);
 
-        return {
-            orb,
-            trail,
-            color: new THREE.Color(color),
-            history: [],
-            maxHistory: HISTORY,
-            trailOpacity: 1.0,
-            tiltA: (Math.random() - 0.5) * Math.PI,
-            tiltB: (Math.random() - 0.5) * Math.PI,
-            phase: (i / SELECTOR_COLORS.length) * Math.PI * 2,
-            speed: 1.0
+    const halo = new THREE.Sprite(new THREE.SpriteMaterial({
+        map: orbTexture,
+        color: new THREE.Color(color).multiplyScalar(1.0),
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        toneMapped: false
+    }));
+    halo.scale.setScalar(orbitRadius * 0.25);
+    orbGroup.add(halo);
+
+    selectorGroup.add(orbGroup);
+
+    const trailGeo = new THREE.BufferGeometry();
+    const positions = new Float32Array(HISTORY * 3);
+    trailGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const trailColors = new Float32Array(HISTORY * 3);
+    trailGeo.setAttribute('color', new THREE.BufferAttribute(trailColors, 3));
+    const trailMat = new THREE.LineBasicMaterial({
+        vertexColors: true,
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+    });
+    const trail = new THREE.Line(trailGeo, trailMat);
+    selectorGroup.add(trail);
+
+    return {
+        orbGroup,
+        core,
+        halo,
+        trail,
+        color: new THREE.Color(color),
+        history: [],
+        maxHistory: HISTORY,
+        trailOpacity: 1.0,
+        tiltA: (Math.random() - 0.5) * Math.PI,
+        tiltB: (Math.random() - 0.5) * Math.PI,
+        phase: (i / SELECTOR_COLORS.length) * Math.PI * 2,
+        speed: 1.0
         };
     });
-
     const handle = {
         group: selectorGroup,
         orbs,
@@ -104,10 +135,10 @@ function attachSelector(targetMesh) {
                 const x3 = x * cosB + z2 * sinB;
                 const z3 = -x * sinB + z2 * cosB;
 
-                o.orb.position.set(c.x + x3, c.y + y2, c.z + z3);
+                o.orbGroup.position.set(c.x + x3, c.y + y2, c.z + z3);
 
-                o.history.unshift([o.orb.position.x, o.orb.position.y, o.orb.position.z]);
-
+                o.history.unshift([o.orbGroup.position.x, o.orbGroup.position.y, o.orbGroup.position.z]);
+                
                 const cap = Math.floor(o.maxHistory);
                 if (o.history.length > cap) o.history.length = cap;
 
@@ -119,9 +150,9 @@ function attachSelector(targetMesh) {
                     pos[i*3] = p[0]; pos[i*3+1] = p[1]; pos[i*3+2] = p[2];
                     
                     const fade = i < validLength ? (1 - (i / validLength)) : 0;
-                    col[i*3]   = o.color.r * fade * o.trailOpacity * 1.5;
-                    col[i*3+1] = o.color.g * fade * o.trailOpacity * 1.5;
-                    col[i*3+2] = o.color.b * fade * o.trailOpacity * 1.5;
+                    col[i*3]   = o.color.r * fade * o.trailOpacity * 2.0;
+                    col[i*3+1] = o.color.g * fade * o.trailOpacity * 2.0;
+                    col[i*3+2] = o.color.b * fade * o.trailOpacity * 2.0;
                 }
 
                 o.trail.geometry.attributes.position.needsUpdate = true;
@@ -133,7 +164,8 @@ function attachSelector(targetMesh) {
             shapeGroup.remove(selectorGroup);
             orbs.forEach(o => {
 
-                o.orb.material.dispose();
+                o.core.material.dispose();
+                o.halo.material.dispose();
                 o.trail.geometry.dispose();
                 o.trail.material.dispose();
                 // o.trail.HISTORY = 50
@@ -142,7 +174,7 @@ function attachSelector(targetMesh) {
     };
 
     return handle;
-}
+    }
 
 let activeSelector = null;
 let migrationTween = null;
@@ -193,7 +225,7 @@ function setSelectorTarget(mesh) {
         
         activeSelector.orbs.forEach(o => {
         // gsap.to(o, { trailOpacity: 1.0, duration: 0.6});
-        o.maxHistory = 200; 
+        o.maxHistory = 250; 
     }); 
     }
 });
@@ -267,12 +299,12 @@ function createShape(type) {
     const colors = new Float32Array(count * 3);
 
     const palette = [
-    [0.9, 0.2, 0.3],   // PlayStation red (circle)
-    [0.4, 0.8, 0.5],   // PlayStation green (triangle)
-    [0.8, 0.4, 0.7],   // PlayStation pink (square)
-    [0.3, 0.5, 1.0],   // PlayStation blue (cross)
-    [0.5, 0.3, 0.9],   // indigo
-    [0.2, 0.4, 0.8],   // deep blue
+    [0.9, 0.2, 0.3],
+    [0.4, 0.8, 0.5],
+    [0.8, 0.4, 0.7],
+    [0.3, 0.5, 1.0],
+    [0.5, 0.3, 0.9],
+    [0.2, 0.4, 0.8],
     ];
 
     for (let i = 0; i < count; i += 3) {

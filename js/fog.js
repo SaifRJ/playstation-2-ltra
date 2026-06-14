@@ -1,6 +1,23 @@
 import * as THREE from 'three';
 import { scene } from './scene.js';
 
+
+// tested seeds for fog I believe look the best
+// const SEEDS = [17072005, 42, 137, 9001, 2024, 808];
+// const seed = SEEDS[Math.floor(Math.random() * SEEDS.length)];
+
+// function seededRandom(seed) {
+//     return function() {
+//         seed = (seed + 0x6D2B79F5) | 0;
+//         let t = seed;
+//         t = Math.imul(t ^ (t >>> 15), t | 1);
+//         t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+//         return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+//     };
+// }
+
+// const random = seededRandom(SEEDS[0]);
+
 const fogParticles = [];
 
 function makeFogTexture(bright = false) {
@@ -39,15 +56,21 @@ const fogTexture = makeFogTexture(false);
 const brightFogTexture = makeFogTexture(true);
 
 const FOG_LAYERS = [
-  
+
     // layer 1 - haze
-    {count: 200, zMin: -30, zMax: 20, spreadX: 100,  spreadY: 70, scaleMin: 8,  scaleMax: 40, opacityMin: 0.1,  opacityMax: 0.2,  bright: true  },
+    {count: 200, zMin: 20, zMax: -30, spreadX: 100,  spreadY: 70, scaleMin: 8,  scaleMax: 40, opacityMin: 0.1,  opacityMax: 0.2,  bright: false, 
+    waveAmp: 0.5, waveDir: [1, 0], waveSpeed: 0.0001},
 
     // layer 2 - fog
-    {count: 250,  zMin: -25, zMax: -50, spreadX: 100, spreadY: 70, scaleMin: 20, scaleMax: 90, opacityMin: 0.1, opacityMax: 0.2, bright: false },
+    {count: 250,  zMin: -50, zMax: -25, spreadX: 120, spreadY: 70, scaleMin: 20, scaleMax: 50, opacityMin: 0.2, opacityMax: 0.25, bright: false, 
+    waveAmp: 3.5, waveDir: [1, 0], waveSpeed: 0.0003},
 
     // layer 3 - horizon
-    {count: 100,  zMin: -25, zMax: -50, spreadX: 100, spreadY: 70, scaleMin: 20, scaleMax: 90, opacityMin: 0.2, opacityMax: 0.35, bright: false, driftSpeed: 6 + Math.random() * 0.00012 }
+    {count: 250,  zMin: -50, zMax: -25, spreadX: 120, spreadY: 70, scaleMin: 20, scaleMax: 53.5, opacityMin: 0.3, opacityMax: 0.85, bright: false, 
+    waveAmp: 2.0, waveDir: [0, 0], waveSpeed: 0.0001},
+
+    // {count: 250,  zMin: -100, zMax: -50, spreadX: 120, spreadY: 70, scaleMin: 20, scaleMax: 50, opacityMin: 0.3, opacityMax: 0.8, bright: false, 
+    // waveAmp: 2.0, waveDir: [0, 0], waveSpeed: 0.0001},
 
 ];
 
@@ -77,10 +100,16 @@ FOG_LAYERS.forEach((layer, layerIndex) => {
       baseX: x,
       baseY: y,
       layerIndex,                                
-      driftSpeed: 0.00005 + Math.random() * 0.00012,
-      driftAmount: 3.5 + Math.random() * 3,
-      rotSpeed: (Math.random() - 0.5) * 0.00008
+      driftSpeed: 0.01 + Math.random() * 0.000006,
+      driftAmount: 0.01 + Math.random() * 0.000006,
+      rotSpeed: (Math.random() - 0.5) * 0.00008,
+      waveAmp: layer.waveAmp,
+      waveDirX: layer.waveDir[0],
+      waveDirY: layer.waveDir[1],
+      waveSpeed: layer.waveSpeed,
+      wavePhase: (x + y) * 0.1
     };
+
     fogParticles.push(sprite);
     scene.add(sprite);
   }
