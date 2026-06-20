@@ -3,7 +3,8 @@ import gsap from 'gsap';
 import { initAudio, loadSound, playSound } from './audio.js';
 import { camera } from './scene.js';
 import { transitionToAccountSelect, transitionToMainMenu } from './transitions.js';
-import { navigateAccounts, setSelectorTarget, getSelectedMesh } from './shapes.js'
+import { navigateAccounts, getSelectedMesh } from './shapes.js';
+import { setSelectorTarget } from './ui/selector.js';
 
 let audioReady = false;
 
