@@ -6,6 +6,7 @@ import { animateShapes, shapeGroup } from './shapes.js';
 import state from './state.js';
 import './input.js';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
+import { updateSelector } from './ui/selector.js';
 
 const stats = new Stats();
 document.body.appendChild(stats.dom);
@@ -13,8 +14,7 @@ document.body.appendChild(stats.dom);
 function animate() {
 
     requestAnimationFrame(animate);
-
-
+    
     particles.rotation.y += 0.00001;
     particles.rotation.x += 0.00001;
 
@@ -50,8 +50,7 @@ function animate() {
 
     composer.render();
     stats.update();
-
-    
+    updateSelector(Date.now() * 0.001);    
 }
 
 animate();
