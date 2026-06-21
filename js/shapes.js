@@ -4,11 +4,15 @@ import { scene, camera } from './scene.js';
 import { accounts } from './accounts.js';
 import state from './state.js';
 import { setSelectorTarget } from './ui/selector.js';
+import { UIObject } from './ui/UIObject.js';
 
-const shapeMeshes = [];
+const accountObjects = [];
 
+function getSelectedObject() {
+    return accountObjects[state.selectedAccount];
+}
 function getSelectedMesh() {
-    return shapeMeshes[state.selectedAccount];
+    return accountObjects[state.selectedAccount]?.mesh;
 }
 
 function createEnvMap() {
@@ -66,12 +70,12 @@ function createShape(type) {
     const colors = new Float32Array(count * 3);
 
     const palette = [
-    [0.9, 0.2, 0.3],
-    [0.4, 0.8, 0.5],
-    [0.8, 0.4, 0.7],
-    [0.3, 0.5, 1.0],
-    [0.5, 0.3, 0.9],
-    [0.2, 0.4, 0.8],
+        [0.9, 0.2, 0.3],
+        [0.4, 0.8, 0.5],
+        [0.8, 0.4, 0.7],
+        [0.3, 0.5, 1.0],
+        [0.5, 0.3, 0.9],
+        [0.2, 0.4, 0.8],
     ];
 
     for (let i = 0; i < count; i += 3) {
@@ -89,23 +93,25 @@ function createShape(type) {
 
     geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-   const material = new THREE.MeshStandardMaterial({
-    vertexColors: true,
-    metalness: 0.0,
-    roughness: 1.0,
-    flatShading: false,
-    emissiveIntensity: 1.0
+    const material = new THREE.MeshStandardMaterial({
+        vertexColors: true,
+        metalness: 0.0,
+        roughness: 1.0,
+        flatShading: false,
+        emissiveIntensity: 1.0,
+        // transparent: false 
     });
 
     material.userData.glowUniform = { value: 0.4 };
 
     material.onBeforeCompile = (shader) => {
-    shader.uniforms.uGlow = material.userData.glowUniform;
-    shader.fragmentShader = 'uniform float uGlow;\n' + shader.fragmentShader.replace(
-        '#include <emissivemap_fragment>',
-        `#include <emissivemap_fragment>
-         totalEmissiveRadiance = diffuseColor.rgb * uGlow;`
-    );};
+        shader.uniforms.uGlow = material.userData.glowUniform;
+        shader.fragmentShader = 'uniform float uGlow;\n' + shader.fragmentShader.replace(
+            '#include <emissivemap_fragment>',
+            `#include <emissivemap_fragment>
+             totalEmissiveRadiance = diffuseColor.rgb * uGlow;`
+        );
+    };
 
     const mesh = new THREE.Mesh(geometry, material);
 
@@ -119,30 +125,39 @@ function createShape(type) {
 }
 
 function initAccountShapes() {
-    shapeMeshes.forEach(m => shapeGroup.remove(m));
-    shapeMeshes.length = 0;
+    // remove any existing objects
+    accountObjects.forEach(obj => obj.removeFromScene(shapeGroup));
+    accountObjects.length = 0;
 
-    // shapeGroup.children.forEach(child => {
-    //     if (child.isLight) shapeGroup.remove(child);
-    // });
-
-    // const shapeLight = new THREE.PointLight(0x6699cc, 2.5, 40);
-    // shapeLight.position.set(2, 3, 5);
-    // shapeGroup.add(shapeLight);
-
-    // const rimLight = new THREE.PointLight(0x4466aa, 1.5, 30);
-    // rimLight.position.set(-3, -2, 3);
-    // shapeGroup.add(rimLight);
+    const labelEl = document.querySelector('.account-name-display');
 
     accounts.forEach((account, index) => {
         const mesh = createShape(account.shape);
         const offset = index - state.selectedAccount;
         mesh.position.set(offset * 6, 0, 0);
-        mesh.material.opacity = offset === 0 ? 0.8 : 0.1;
-        shapeGroup.add(mesh);
-        shapeMeshes.push(mesh);
+
+        const uiObj = new UIObject({
+            mesh,
+            labelText: account.name,
+            labelEl: index === state.selectedAccount ? labelEl : null,
+            idleRotation: true,
+            rotationSpeedX: 0.001,
+            rotationSpeedY: 0.001,
+            rotationSpeedZ: 0.001,
+            glowable: true,
+            glowMin: 1.0,
+            glowMax: 1.4,
+            glowSpeed: 1.2,
+            glowIdle: 1.0,
+            onSelect: () => {}
+        });
+
+        uiObj.addToScene(shapeGroup);
+        accountObjects.push(uiObj);
     });
 
+    // init selection state
+    accountObjects[state.selectedAccount]?.setSelected(true);
 }
 
 function showShapes() {
@@ -154,31 +169,21 @@ function showShapes() {
     );
     shapeGroup.rotation.copy(camera.rotation);
 
-    shapeMeshes.forEach((mesh, index) => {
+    accountObjects.forEach((obj, index) => {
         const offset = index - state.selectedAccount;
         const targetOpacity = offset === 0 ? 0.8 : 0.1;
 
-        mesh.material.opacity = 0;
-        mesh.position.y = -0.5;
+        obj.mesh.position.y = -0.5;
 
-        gsap.to(mesh.material, {
-            opacity: targetOpacity,
-            duration: 0.8,
-            ease: "power2.out",
-            delay: 0.1
-        });
-
-        gsap.to(mesh.position, {
+        gsap.to(obj.mesh.position, {
             y: 0,
             duration: 0.8,
             ease: "power2.out",
             delay: 0.1
         });
-
     });
 
-    // Switch selector tp target shape
-    setSelectorTarget(shapeMeshes[state.selectedAccount]);
+    setSelectorTarget(accountObjects[state.selectedAccount].mesh);
 }
 
 function hideShapes() {
@@ -189,32 +194,30 @@ function navigateAccounts(direction) {
     const newIndex = state.selectedAccount + direction;
     if (newIndex < 0 || newIndex >= accounts.length) return;
 
+    // selection state — UIObject handles its own selection visuals
+    accountObjects[state.selectedAccount].setSelected(false);
     state.selectedAccount = newIndex;
+    accountObjects[state.selectedAccount].setSelected(true);
 
-    shapeMeshes.forEach((mesh, index) => {
+    accountObjects.forEach((obj, index) => {
         const offset = index - state.selectedAccount;
 
-        gsap.to(mesh.position, {
+        gsap.to(obj.mesh.position, {
             x: offset * 6,
             duration: 0.6,
             ease: "power2.out"
         });
 
-        gsap.to(mesh.scale, {
+        gsap.to(obj.mesh.scale, {
             x: offset === 0 ? 1 : 0.6,
             y: offset === 0 ? 1 : 0.6,
             z: offset === 0 ? 1 : 0.6,
             duration: 0.6,
             ease: "power2.out"
         });
-
-        gsap.to(mesh.material, {
-            opacity: offset === 0 ? 0.8 : 0.3,
-            duration: 0.6,
-            ease: "power2.out"
-        });
     });
 
+    // label swap
     const nameEl = document.querySelector('.account-name-display');
     if (nameEl) {
         gsap.to(nameEl, {
@@ -229,20 +232,9 @@ function navigateAccounts(direction) {
 }
 
 function animateShapes() {
-    const t = Date.now() * 0.001;   
-    shapeMeshes.forEach((mesh, index) => {
-        mesh.rotation.y += 0.001;
-        mesh.rotation.x += 0.001;
-        mesh.rotation.z += 0.001;
-
-        const offset = index - state.selectedAccount;
-        const isSelected = offset === 0;
-        const minGlow = 1.0, maxGlow = 1.4;
-        const breathe = minGlow + (Math.sin(t * 1.2) * 0.5 + 0.5) * (maxGlow - minGlow);
-        mesh.material.userData.glowUniform.value = isSelected ? breathe : 1.0;
-
-       
-    });
+    const t = Date.now() * 0.001;
+    accountObjects.forEach(obj => obj.update(t));
 }
 
-export { initAccountShapes, showShapes, hideShapes, navigateAccounts, animateShapes, getSelectedMesh, shapeGroup };
+export {
+    initAccountShapes, showShapes, hideShapes, navigateAccounts, animateShapes, getSelectedMesh, getSelectedObject,shapeGroup};
