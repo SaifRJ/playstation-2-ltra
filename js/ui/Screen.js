@@ -2,9 +2,9 @@ import { setSelectorTarget } from './selector.js';
 
 
 // Screen Class
-// Owns a set of UIObjects (e.g. accountObjects[]), a DOM container, and lifecycle hooks. 
-// Each Screen owns its own entry/exit animation, UIObject navigation, and responses to user input. 
-// Transitioning between screens is handled externally by the screen manager.
+// Owns a set of UIObjects (e.g. accountObjects[]), a DOM container, and lifecycle hooks
+// Each Screen owns its own entry/exit animation, UIObject navigation, and responses to user input
+// Transitioning between screens is handled externally by the screen manager
  
 class Screen {
     constructor({
@@ -19,6 +19,7 @@ class Screen {
         onCancel = null,        
         onPSButton = null,      
         onNavigate = null,
+        onUpdate = null,
     } = {}) {
         this.name = name;
         this.domEl = domEl;
@@ -32,8 +33,8 @@ class Screen {
         this._onCancel = onCancel;
         this._onPSButton = onPSButton;
         this._onNavigate = onNavigate;
-
         this._active = false;
+        this._onUpdate = onUpdate;
     }
 
     async enter() {
@@ -72,17 +73,16 @@ class Screen {
 
     // nav
     navigate(direction) {
-        if (this.items.length === 0) return;
-        const newIndex = this.selectedIndex + direction;
-        if (newIndex < 0 || newIndex >= this.items.length) return;
+           if (this.items.length === 0) return;
+    const newIndex = this.selectedIndex + direction;
+    if (newIndex < 0 || newIndex >= this.items.length) return;
 
-        this.items[this.selectedIndex].setSelected(false);
-        this.selectedIndex = newIndex;
-        this.items[this.selectedIndex].setSelected(true);
+    this.items[this.selectedIndex].setSelected(false);
+    this.selectedIndex = newIndex;
+    this.items[this.selectedIndex].setSelected(true);
 
-        setSelectorTarget(this.items[this.selectedIndex].mesh);
-
-        if (this._onNavigate) this._onNavigate(this.selectedIndex, direction, this);
+    if (this._onNavigate) this._onNavigate(this.selectedIndex, direction, this);
+    setSelectorTarget(this.items[this.selectedIndex].mesh);                    
     }
 
     confirm() {
@@ -101,10 +101,11 @@ class Screen {
     }
 
     update(t) {
-        if (!this._active) return;
-        this.items.forEach(item => item.update(t));
+    if (!this._active) return;
+    this.items.forEach(item => item.update(t));
+    if (this._onUpdate) this._onUpdate(t, this);
     }
-
+    
     isActive() {
         return this._active;
     }

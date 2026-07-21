@@ -74,15 +74,15 @@ canvas {
     display: flex;
     flex-direction: column;
     align-items: center;
-    animation: floatContent 6s ease-in-out infinite;
 }
 
 .press-ps-content.exit {
-    animation: exitDissolve 0.2s ease-in forwards;
+       opacity: 0;
+       transition: opacity 1s ease-out;
 }
 
 #screen-press-ps p {
-    animation: textPulse 4s ease-in-out infinite;
+    animation: textPulse 5s ease-in-out infinite;
     font-size: 30px;
     will-change: opacity, text-shadow;
 }
@@ -97,11 +97,10 @@ canvas {
 }
 
 .logo-container {
-    position: absolute;
-    top: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-top: 20px;   /* gap between text and logo */
 }
 
 /* ACCOUNT SELECT SCREEN */
