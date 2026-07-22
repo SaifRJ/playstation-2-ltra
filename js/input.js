@@ -1,10 +1,5 @@
-import state from './state.js';
-import gsap from 'gsap';
+import { screenManager } from './screens/screenManager.js';
 import { initAudio, loadSound, playSound } from './audio.js';
-import { camera } from './scene.js';
-import { transitionToAccountSelect, transitionToMainMenu } from './transitions.js';
-import { navigateAccounts, getSelectedMesh } from './shapes.js';
-import { setSelectorTarget } from './ui/selector.js';
 
 let audioReady = false;
 
@@ -13,7 +8,7 @@ async function startAmbience() {
     initAudio();
     await loadSound('ambience', 'assets/sounds/ambience.mp3');
     await loadSound('confirm', 'assets/sounds/confirm.mp3');
-    await loadSound('scroll', 'assets/sounds/scroll.mp3')
+    await loadSound('scroll', 'assets/sounds/scroll.mp3');
     audioReady = true;
     playSound('ambience', 0.2, true, 3);
 }
@@ -23,31 +18,11 @@ document.addEventListener('click', startAmbience);
 document.addEventListener('keydown', async (e) => {
     await startAmbience();
 
-    if (state.currentScreen === 'press-ps' && e.key === 'Enter' && !state.isTransitioning) {
-        state.isTransitioning = true;
-        playSound('confirm', 0.5);
+    const current = screenManager.getCurrent();
+    if (!current) return;
 
-        document.querySelector('.press-ps-content').classList.add('exit');
-
-        transitionToAccountSelect()
-    }
-
-    if (state.currentScreen === 'account-select' && !state.isTransitioning) {
-    if (e.key === 'ArrowLeft') {
-        navigateAccounts(-1);
-        setSelectorTarget(getSelectedMesh());
-        playSound('scroll', 0.5);
-    }
-    if (e.key === 'ArrowRight') {
-        navigateAccounts(1);
-        setSelectorTarget(getSelectedMesh());
-        playSound('scroll', 0.5);
-    }
-    if (e.key === 'Enter') {
-        playSound('confirm', 0.5)
-        transitionToMainMenu()
-    }
-
-    }
-    
+    if (e.key === 'ArrowLeft')  current.navigate(-1);
+    if (e.key === 'ArrowRight') current.navigate(1);
+    if (e.key === 'Enter')      current.confirm();
+    if (e.key === 'Escape')     current.cancel();
 });
