@@ -5,9 +5,7 @@ import { scene } from '../scene.js';
 // Orb cursor/selector
 
 // setSelectorTarget(targetMesh) migrates the selector between targets via a CatmullRom curve
-// attachSelector(targetMesh) instantiates orb textures and trails,
-// The selector lives at scene root (not parented to any specific group), so it will follow targets across screens by reading their 
-// world position every frame
+// attachSelector(targetMesh) instantiates orb textures and trails
 
 const SELECTOR_COLORS = [0xfe5258, 0xfe45b4, 0xb071f9, 0x02f52c];
 const HISTORY = 250;
@@ -49,14 +47,12 @@ const orbCoreTexture = makeOrbCoreTexture();
 let activeSelector = null;
 let migrationTween = null;
 
-function attachSelector(targetMesh) {
-    targetMesh.geometry.computeBoundingSphere();
-    const r = targetMesh.geometry.boundingSphere.radius;
-    const orbitRadius = r * 1.35;
+function attachSelector(uiObject) {
+    const orbitRadius = uiObject.getOrbitRadius();
     const HISTORY = 250;
 
     const selectorGroup = new THREE.Group();
-    scene.add(selectorGroup);
+    uiObject.mesh.parent.add(selectorGroup);
 
     const orbs = SELECTOR_COLORS.map((color, i) => {
     const orbGroup = new THREE.Group();
@@ -114,7 +110,7 @@ function attachSelector(targetMesh) {
         speed: 1.0
         };
     });
-    
+
     const handle = {
         group: selectorGroup,
         orbs,
@@ -126,7 +122,7 @@ function attachSelector(targetMesh) {
         update(t) {
 
             if (handle.target && !migrationTween) {
-            handle.center.copy(handle.target.position);
+            handle.center.copy(handle.target.getAnchor());
             }
 
             const globalSpeed = 1.5;
@@ -187,24 +183,25 @@ function attachSelector(targetMesh) {
     return handle;
     }
 
+    
 // Sets target to new UI object
-function setSelectorTarget(mesh) {
-    const meshWorld = new THREE.Vector3();
-    mesh.getWorldPosition(meshWorld);
+function setSelectorTarget(uiObject) {
+    
+    // selector will orbit the first object in any scene
+    const anchor = uiObject.getAnchor(); 
 
     if (!activeSelector) {
-        activeSelector = attachSelector(mesh);
-        activeSelector.target = mesh;
-        activeSelector.center.copy(meshWorld);
+        activeSelector = attachSelector(uiObject);
+        activeSelector.target = uiObject;
+        activeSelector.center.copy(anchor);
         return;
     }
     // kill any in-flight migration so rapid scrolling doesn't pile up tweens
     if (migrationTween) migrationTween.kill();
-
-    activeSelector.target = mesh;
+    activeSelector.target = uiObject;
 
     const fromPos = activeSelector.center.clone();
-    const toPos = meshWorld.clone();
+    const toPos = anchor.clone();
     const mid = fromPos.clone().lerp(toPos, 0.5);
     
     // orb migration curve
@@ -213,6 +210,7 @@ function setSelectorTarget(mesh) {
     const curve = new THREE.CatmullRomCurve3([fromPos, mid, toPos]);
 
     const progress = { u: 0 };
+    
     activeSelector.orbs.forEach(o => {
     // fade opacity when migrating
     gsap.to(o, { trailOpacity: 1.0, maxHistory: 50, duration: 0.4 });
@@ -223,10 +221,9 @@ function setSelectorTarget(mesh) {
         ease: "power2.inOut",
         onUpdate: () => {
             const curvePoint = curve.getPointAt(progress.u);
-            mesh.getWorldPosition(meshWorld);   // re-read each frame in case it moves
             activeSelector.center.lerpVectors(
                 curvePoint,
-                meshWorld,
+                uiObject.getAnchor(),
                 progress.u * progress.u
             );
         },
@@ -234,15 +231,13 @@ function setSelectorTarget(mesh) {
         migrationTween = null;
         
         activeSelector.orbs.forEach(o => {
-        // gsap.to(o, { trailOpacity: 1.0, duration: 0.6});
         o.maxHistory = 250; 
     }); 
     }
 });
 
-    // also smoothly adjust orbit radius for different-sized shapes
-    mesh.geometry.computeBoundingSphere();
-    const newR = mesh.geometry.boundingSphere.radius * 1.1;
+    // smoothly adjust orbit radius for different-sized shapes
+    const newR = uiObject.getOrbitRadius();
     gsap.to(activeSelector, {
         orbitRadius: newR,
         duration: 0.6,
