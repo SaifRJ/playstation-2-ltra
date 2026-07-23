@@ -25,17 +25,18 @@ pCtx.fill();
 
 const particleTexture = new THREE.CanvasTexture(particleCanvas);
 
+// const Z_BANDS = [
+// { zMin:  18, zMax:  25, fraction: 0.40 }, 
+// { zMin:   5, zMax:  18, fraction: 0.25 }, 
+// { zMin: -10, zMax:   5, fraction: 0.20 },  
+// { zMin: -30, zMax: -10, fraction: 0.15 },
+// ];
+
 const Z_BANDS = [
-
-    { zMin: -30, zMax: -14, fraction: 0.10 }, 
-    
-    { zMin: -14, zMax:   2, fraction: 0.10 },
-    
-    { zMin:   5, zMax:  18, fraction: 0.30 },
-
-    { zMin:  18, zMax:  34, fraction: 0.45 },
-
-    { zMin:  34, zMax:  50, fraction: 0.5 } 
+    { zMin: -12, zMax:  -5, fraction: 0.40 },  
+    { zMin: -25, zMax: -12, fraction: 0.25 }, 
+    { zMin: -40, zMax: -25, fraction: 0.20 },   
+    { zMin: -60, zMax: -40, fraction: 0.15 },   
 ];
 
 const positions = new Float32Array(particleCount * 3);
@@ -51,7 +52,7 @@ Z_BANDS.forEach(band => {
             z = band.zMin + Math.random() * (band.zMax - band.zMin);
         } while (Math.sqrt(x * x + y * y + (z - 40) * (z - 30)) < 5);
 
-        positions[idx * 3]     = x;
+        positions[idx * 3] = x;
         positions[idx * 3 + 1] = y;
         positions[idx * 3 + 2] = z;
         idx++;
@@ -63,9 +64,9 @@ particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3
 
 const particleMaterial = new THREE.PointsMaterial({
     map: particleTexture,
-    size: 0.315,
+    size: 0.3,
     transparent: true,
-    opacity: 0.9,
+    opacity: 1,
     depthWrite: false,
     blending: THREE.AdditiveBlending,
     sizeAttenuation: true,

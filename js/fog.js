@@ -39,7 +39,7 @@ function makeFogTexture(bright = false) {
     const r = size * (0.12 + Math.random() * 0.18);
 
     const g = ctx.createRadialGradient(bx, by, 0, bx, by, r);
-    const a = 0.06 + Math.random() * 0.06;        
+    const a = 0.06 + Math.random() * 0.03;        
     g.addColorStop(0,   `rgba(${core[0]}, ${core[1]}, ${core[2]}, ${a})`);
     g.addColorStop(0.5, `rgba(${edge[0]}, ${edge[1]}, ${edge[2]}, ${a * 0.4})`);
     g.addColorStop(1,   `rgba(${edge[0]}, ${edge[1]}, ${edge[2]}, 0)`);
@@ -58,19 +58,16 @@ const brightFogTexture = makeFogTexture(true);
 const FOG_LAYERS = [
 
     // layer 1 - haze
-    {count: 200, zMin: 20, zMax: -30, spreadX: 100,  spreadY: 70, scaleMin: 8,  scaleMax: 40, opacityMin: 0.1,  opacityMax: 0.2,  bright: false, 
+    {count: 200, zMin: -20, zMax: -50, spreadX: 100,  spreadY: 55, scaleMin: 8,  scaleMax: 40, opacityMin: 0.1,  opacityMax: 0.2,  bright: false, 
     waveAmp: 0.5, waveDir: [1, 0], waveSpeed: 0.0001},
 
     // layer 2 - fog
-    {count: 250,  zMin: -50, zMax: -25, spreadX: 120, spreadY: 70, scaleMin: 20, scaleMax: 50, opacityMin: 0.2, opacityMax: 0.25, bright: false, 
+    {count: 250,  zMin: -70, zMax: -45, spreadX: 125, spreadY: 55, scaleMin: 20, scaleMax: 50, opacityMin: 0.2, opacityMax: 0.25, bright: false, 
     waveAmp: 3.5, waveDir: [1, 0], waveSpeed: 0.0003},
 
     // layer 3 - horizon
-    {count: 250,  zMin: -50, zMax: -25, spreadX: 120, spreadY: 70, scaleMin: 20, scaleMax: 53.5, opacityMin: 0.3, opacityMax: 0.85, bright: false, 
+    {count: 250,  zMin: -70, zMax: -45, spreadX: 125, spreadY: 55, scaleMin: 20, scaleMax: 53.5, opacityMin: 0.3, opacityMax: 0.85, bright: false, 
     waveAmp: 2.0, waveDir: [0, 0], waveSpeed: 0.0001},
-
-    // {count: 250,  zMin: -100, zMax: -50, spreadX: 120, spreadY: 70, scaleMin: 20, scaleMax: 50, opacityMin: 0.3, opacityMax: 0.8, bright: false, 
-    // waveAmp: 2.0, waveDir: [0, 0], waveSpeed: 0.0001},
 
 ];
 
