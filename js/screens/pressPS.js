@@ -21,7 +21,7 @@ const pressPSScreen = new Screen({
 
         await Promise.all([
             gsap.to(camera.position, {
-                z: 30,
+                z: 0,
                 duration: 2.8,
                 ease: "power2.inOut"
             }),
@@ -40,12 +40,12 @@ const pressPSScreen = new Screen({
 
         await Promise.all([
             gsap.to(camera.position, {
-                z: 15,
+                z: -15,
                 duration: 2.8,
                 ease: "power2.inOut"
             }),
             gsap.to(camera.rotation, {
-                z: 0.5,
+                z: 0.4,
                 duration: 2.8,
                 ease: "power2.inOut"
             })
