@@ -54,7 +54,7 @@ class Screen {
         if (this._onEnterCb) await this._onEnterCb(this);
 
         if (this.items.length > 0) {
-            setSelectorTarget(this.items[this.selectedIndex].mesh);
+            setSelectorTarget(this.items[this.selectedIndex]);
         }
     }
 
@@ -82,7 +82,7 @@ class Screen {
     this.items[this.selectedIndex].setSelected(true);
 
     if (this._onNavigate) this._onNavigate(this.selectedIndex, direction, this);
-    setSelectorTarget(this.items[this.selectedIndex].mesh);                    
+    setSelectorTarget(this.items[this.selectedIndex]);                
     }
 
     confirm() {
