@@ -1,26 +1,24 @@
 import gsap from 'gsap';
 import * as THREE from 'three';
-import { Screen } from '../ui/Screen.js';
-import { screenManager } from '../screens/screenManager.js';
-import { UIObject } from '../ui/UIObject.js';
-import { scene, camera } from '../scene.js';
-import { accounts } from '../accounts.js';
-import { createShape } from '../shapes.js';
-import { playSound } from '../audio.js';
-import state from '../state.js';
 
+import state from '../state.js';
+import { scene, camera } from '../scene.js';
+import { screenManager } from '../screens/screenManager.js';
+import { accounts } from '../accounts.js';
+import { playSound } from '../audio.js';
+import { createShape } from '../shapes.js';
+import { Screen } from '../ui/Screen.js';
+import { UIObject } from '../ui/UIObject.js';
+import { fadeToBlack } from '../ui/screenEffects.js';
 
 // 'Who's Playing?' screen
-
 // Owns its own shapeGroup, positioned in front of the camera
 // The group holds all account UIObjects side-by-side, allows users to select their account
-
 // On enter: shapes rise into view from below.
 // On navigate: shapes slide horizontally, selected one scales up.
 // On confirm: transition to main-menu.
-
-
 // shapeGroup lives at scene root, follows camera via onUpdate hook
+
 const shapeGroup = new THREE.Group();
 shapeGroup.visible = false;
 scene.add(shapeGroup);
@@ -84,9 +82,22 @@ const accountSelectScreen = new Screen({
     },
 
     onExit: async (screen) => {
-        // to-do: proper exit animation when main-menu flow is set up
-        shapeGroup.visible = false;
-    },
+    
+    // existing content disappears
+    shapeGroup.visible = false;
+
+    await Promise.all([
+        // camera moves
+        gsap.to(camera.position, { z: -45, duration: 3.8, ease: 'power2.inOut' }),
+        gsap.to(camera.rotation, { z: 0.9, duration: 3.3, ease: 'power2.inOut' }),
+        
+        // fade to black
+        (async () => {
+            await new Promise(r => setTimeout(r, 1000));
+            await fadeToBlack(2.0);
+        })()
+    ]);
+},
 
     onNavigate: (newIndex, direction, screen) => {
         state.selectedAccount = newIndex;
@@ -109,7 +120,7 @@ const accountSelectScreen = new Screen({
             });
         });
 
-        // fade label out, swap text, fade back in
+        // account title text
         if (labelEl) {
             gsap.to(labelEl, {
                 opacity: 0,
