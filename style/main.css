@@ -12,6 +12,18 @@
     box-sizing: border-box;
 }
 
+#fade-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: black;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 100;
+}
+
 body {
     background: #000;
     color: #fff;
@@ -78,11 +90,11 @@ canvas {
 
 .press-ps-content.exit {
        opacity: 0;
-       transition: opacity 1s ease-out;
+       transition: opacity 0.3s ease-out;
 }
 
 #screen-press-ps p {
-    animation: textPulse 5s ease-in-out infinite;
+    animation: textPulse 5.5s ease-in-out infinite;
     font-size: 30px;
     will-change: opacity, text-shadow;
 }
