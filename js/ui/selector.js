@@ -3,13 +3,13 @@ import gsap from 'gsap';
 import { scene } from '../scene.js';
 
 // Orb cursor/selector
-
 // setSelectorTarget(targetMesh) migrates the selector between targets via a CatmullRom curve
 // attachSelector(targetMesh) instantiates orb textures and trails
 
 const SELECTOR_COLORS = [0xfe5258, 0xfe45b4, 0xb071f9, 0x02f52c];
-const HISTORY = 250;
+const HISTORY = 240;
 
+// Define orb textures (two per orb)
 function makeOrbTexture() {
     const c = document.createElement('canvas');
     c.width = c.height = 128;
@@ -24,8 +24,6 @@ function makeOrbTexture() {
     ctx.fillRect(0, 0, 128, 128);
     return new THREE.CanvasTexture(c);
 }
-
-// Def second orb texture (core)
 function makeOrbCoreTexture() {
     const c = document.createElement('canvas');
     c.width = c.height = 128;
@@ -44,12 +42,13 @@ function makeOrbCoreTexture() {
 const orbTexture = makeOrbTexture();
 const orbCoreTexture = makeOrbCoreTexture();
 
+// Selector logic
 let activeSelector = null;
 let migrationTween = null;
 
 function attachSelector(uiObject) {
     const orbitRadius = uiObject.getOrbitRadius();
-    const HISTORY = 250;
+    const HISTORY = 200;
 
     const selectorGroup = new THREE.Group();
     uiObject.mesh.parent.add(selectorGroup);
@@ -116,7 +115,6 @@ function attachSelector(uiObject) {
         orbs,
         target: null,
         orbitRadius,
-        // the moving point orbs orbit around
         center: new THREE.Vector3(),   
 
         update(t) {
@@ -175,7 +173,6 @@ function attachSelector(uiObject) {
                 o.halo.material.dispose();
                 o.trail.geometry.dispose();
                 o.trail.material.dispose();
-                // o.trail.HISTORY = 50
             });
         }
     };
@@ -196,6 +193,7 @@ function setSelectorTarget(uiObject) {
         activeSelector.center.copy(anchor);
         return;
     }
+
     // kill any in-flight migration so rapid scrolling doesn't pile up tweens
     if (migrationTween) migrationTween.kill();
     activeSelector.target = uiObject;
@@ -229,7 +227,7 @@ function setSelectorTarget(uiObject) {
         },
         onComplete: () => {
         migrationTween = null;
-        
+
         activeSelector.orbs.forEach(o => {
         o.maxHistory = 250; 
     }); 

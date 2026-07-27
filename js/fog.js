@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { scene } from './scene.js';
 
-
 // tested seeds for fog I believe look the best
 // const SEEDS = [17072005, 42, 137, 9001, 2024, 808];
 // const seed = SEEDS[Math.floor(Math.random() * SEEDS.length)];
