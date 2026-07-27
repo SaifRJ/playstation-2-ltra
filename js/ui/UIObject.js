@@ -12,7 +12,7 @@ class UIObject {
         onSelect = null,
 
         // selector anchor
-        orbitRadiusMultiplier = 1.35,   
+        orbitRadiusMultiplier = 1.1,   
         orbitRadiusOverride = null,     
 
         // glow
