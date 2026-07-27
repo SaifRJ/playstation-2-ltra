@@ -9,6 +9,8 @@ async function startAmbience() {
     await loadSound('ambience', 'assets/sounds/ambience.mp3');
     await loadSound('confirm', 'assets/sounds/confirm.mp3');
     await loadSound('scroll', 'assets/sounds/scroll.mp3');
+    await loadSound('menustartambience2', 'assets/sounds/menustartambience2.wav');
+    await loadSound('menustartambience', 'assets/sounds/menustartambience.wav');
     audioReady = true;
     playSound('ambience', 0.2, true, 3);
 }
@@ -21,8 +23,8 @@ document.addEventListener('keydown', async (e) => {
     const current = screenManager.getCurrent();
     if (!current) return;
 
-    if (e.key === 'ArrowLeft')  current.navigate(-1);
-    if (e.key === 'ArrowRight') current.navigate(1);
-    if (e.key === 'Enter')      current.confirm();
-    if (e.key === 'Escape')     current.cancel();
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') current.navigate(-1);
+    if (e.key === 'ArrowRight' || e.key === 'ArrowUp') current.navigate(1);
+    if (e.key === 'Enter') current.confirm();
+    if (e.key === 'Escape') current.cancel();
 });

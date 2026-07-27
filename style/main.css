@@ -49,6 +49,17 @@ p {
     z-index: 3;
 }
 
+.clock-display {
+    position: fixed;
+    top: 24px;
+    left: 24px;
+    font-size: 19px;
+    opacity: 0.9;
+    letter-spacing: 0.05em;
+    pointer-events: none;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.9));
+}
+
 .screen.active {
     display: flex;
     align-items: center;
@@ -97,6 +108,7 @@ canvas {
     animation: textPulse 5.5s ease-in-out infinite;
     font-size: 30px;
     will-change: opacity, text-shadow;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
 }
 
 .ps-logo {
@@ -131,9 +143,8 @@ canvas {
     will-change: opacity, text-shadow;
     position: absolute;
     top: 15%;
-    /* opacity: 0; */
     animation: fadeIn 0.5s ease forwards;
-    /* animation: floatContent 6s ease-in-out infinite; */
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
 
 }
 
@@ -144,6 +155,7 @@ canvas {
     top: 27%;
     opacity: 0;
     animation: fadeIn 0.5s ease forwards;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
 }
 
 .account-name-display {
@@ -153,6 +165,26 @@ canvas {
     bottom: 30%;
     opacity: 0;
     animation: fadeIn 0.5s ease forwards;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
+}
+
+/* MAIN MENU SCREEN */
+
+#screen-main-menu.active ~ .clock-display,
+.clock-display.visible {
+    opacity: 0.7;
+    font-size: 35;
+}
+
+.menu-item-name-display {
+    position: fixed;
+    top: 50%;
+    right: 28%;
+    transform: translateY(-50%);
+    font-size: 32px;
+    opacity: 0;
+    animation: fadeIn 0.5s ease forwards;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
 }
 
 /* ANIMATIONS */
