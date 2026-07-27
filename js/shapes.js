@@ -51,7 +51,6 @@ function createShape(type) {
         roughness: 1.0,
         flatShading: false,
         emissiveIntensity: 1.0,
-        // transparent: false 
     });
 
     material.userData.glowUniform = { value: 0.4 };

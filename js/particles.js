@@ -25,13 +25,6 @@ pCtx.fill();
 
 const particleTexture = new THREE.CanvasTexture(particleCanvas);
 
-// const Z_BANDS = [
-// { zMin:  18, zMax:  25, fraction: 0.40 }, 
-// { zMin:   5, zMax:  18, fraction: 0.25 }, 
-// { zMin: -10, zMax:   5, fraction: 0.20 },  
-// { zMin: -30, zMax: -10, fraction: 0.15 },
-// ];
-
 const Z_BANDS = [
     { zMin: -12, zMax:  -5, fraction: 0.40 },  
     { zMin: -25, zMax: -12, fraction: 0.25 }, 

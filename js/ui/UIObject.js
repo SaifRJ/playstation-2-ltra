@@ -1,7 +1,6 @@
 import gsap from 'gsap';
 
 // UIObject
-
 // Owns mesh, label state, selection behavior, and per-frame animation
 // Labels: Screen owns the DOM element and passes it in via `labelEl`
 
@@ -16,7 +15,7 @@ class UIObject {
         orbitRadiusMultiplier = 1.35,   
         orbitRadiusOverride = null,     
 
-        // glow / breathing
+        // glow
         glowable = true,
         glowMin = 1.0,
         glowMax = 1.4,
