@@ -20,6 +20,7 @@ class Screen {
         onPSButton = null,      
         onNavigate = null,
         onUpdate = null,
+        wrapNavigation = false,
     } = {}) {
         this.name = name;
         this.domEl = domEl;
@@ -35,6 +36,7 @@ class Screen {
         this._onNavigate = onNavigate;
         this._active = false;
         this._onUpdate = onUpdate;
+        this._wrapNavigation = wrapNavigation;
     }
 
     async enter() {
@@ -73,16 +75,21 @@ class Screen {
 
     // nav
     navigate(direction) {
-           if (this.items.length === 0) return;
-    const newIndex = this.selectedIndex + direction;
-    if (newIndex < 0 || newIndex >= this.items.length) return;
+    if (this.items.length === 0) return;
+    let newIndex = this.selectedIndex + direction;
+
+    if (this._wrapNavigation) {
+        newIndex = (newIndex + this.items.length) % this.items.length;
+    } else {
+        if (newIndex < 0 || newIndex >= this.items.length) return;
+    }
 
     this.items[this.selectedIndex].setSelected(false);
     this.selectedIndex = newIndex;
     this.items[this.selectedIndex].setSelected(true);
 
     if (this._onNavigate) this._onNavigate(this.selectedIndex, direction, this);
-    setSelectorTarget(this.items[this.selectedIndex]);                
+    setSelectorTarget(this.items[this.selectedIndex]);
     }
 
     confirm() {
