@@ -7,7 +7,7 @@ import { scene } from '../scene.js';
 // attachSelector(targetMesh) instantiates orb textures and trails
 
 const SELECTOR_COLORS = [0xfe5258, 0xfe45b4, 0xb071f9, 0x02f52c];
-const HISTORY = 240;
+const HISTORY = 200;
 
 // Define orb textures (two per orb)
 function makeOrbTexture() {
@@ -48,7 +48,6 @@ let migrationTween = null;
 
 function attachSelector(uiObject) {
     const orbitRadius = uiObject.getOrbitRadius();
-    const HISTORY = 200;
 
     const selectorGroup = new THREE.Group();
     uiObject.mesh.parent.add(selectorGroup);
@@ -194,6 +193,14 @@ function setSelectorTarget(uiObject) {
         return;
     }
 
+    if (activeSelector.group.parent !== uiObject.mesh.parent) {
+        uiObject.mesh.parent.add(activeSelector.group);
+        activeSelector.target = uiObject;
+        activeSelector.center.copy(anchor);
+        activeSelector.orbitRadius = uiObject.getOrbitRadius();
+        return;
+    }
+
     // kill any in-flight migration so rapid scrolling doesn't pile up tweens
     if (migrationTween) migrationTween.kill();
     activeSelector.target = uiObject;
@@ -206,7 +213,6 @@ function setSelectorTarget(uiObject) {
     mid.y += 0.6;
 
     const curve = new THREE.CatmullRomCurve3([fromPos, mid, toPos]);
-
     const progress = { u: 0 };
     
     activeSelector.orbs.forEach(o => {
@@ -229,7 +235,7 @@ function setSelectorTarget(uiObject) {
         migrationTween = null;
 
         activeSelector.orbs.forEach(o => {
-        o.maxHistory = 250; 
+        o.maxHistory = HISTORY; 
     }); 
     }
 });
