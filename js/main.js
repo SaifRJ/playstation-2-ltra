@@ -46,8 +46,8 @@ function animate() {
     const t = Date.now() * 0.001;
     const fogTime = Date.now();
 
-    particles.rotation.y += 0.00001;
-    particles.rotation.x += 0.00001;
+    particles.rotation.y += 0.00005;
+    particles.rotation.x += 0.00005;
 
     fogParticles.forEach(sprite => {
         const u = sprite.userData;
