@@ -106,7 +106,7 @@ canvas {
 
 #screen-press-ps p {
     animation: textPulse 5.5s ease-in-out infinite;
-    font-size: 30px;
+    font-size: 32px;
     will-change: opacity, text-shadow;
     filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
 }
@@ -179,7 +179,8 @@ canvas {
 .menu-item-name-display {
     position: fixed;
     top: 50%;
-    right: 28%;
+    left: 60%;
+    text-align: left;
     transform: translateY(-50%);
     font-size: 32px;
     opacity: 0;
@@ -187,10 +188,18 @@ canvas {
     filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
 }
 
+.menu-arrow {
+    position: fixed;
+    top: 48.6%;
+    left: 58.5%;
+    height: 27px;
+    animation: textPulse 2.0s ease-in-out infinite;
+}
+
 /* ANIMATIONS */
 @keyframes textPulse {
     0%, 100% {
-        opacity: 0.4;
+        opacity: 0;
         text-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
     }
     50% {
