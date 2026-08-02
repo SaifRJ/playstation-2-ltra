@@ -1,20 +1,21 @@
-PS2 LTRA License
+MIT License
 
-Copyright (c) 2026 Saif Alhmoud
+Copyright © 2026 Saif Alhmoud
 
-This project is a non-commercial fan tribute to the PlayStation® 2. It contains trademarks, audio, and visual assets owned by Sony Interactive Entertainment and other rights holders.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-You are free to:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-    View, fork, and study this code
-    Use the code (excluding third-party assets) in your own projects with credit
-
-You may not:
-
-    Sell or commercially distribute this project
-    Redistribute Sony's trademarks, audio, or visual assets
-    Claim this project is affiliated with or endorsed by Sony
-
-The original code in this project is provided as-is with no warranty.
-
-For the avoidance of doubt, this license applies only to the original code written for this project, not to any third-party assets included within it.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
